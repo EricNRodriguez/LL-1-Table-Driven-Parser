@@ -1,3 +1,5 @@
+from invalid_symbol_error import InvalidSymbolError
+
 class Parser():
 
     def __init__(self, table, terminals):
@@ -7,9 +9,14 @@ class Parser():
 
 
     def parse_string(self, string):
-        stack = ["$", "S"]
+        if len(list(filter(lambda input_char : input_char not in self.terminals, string))) != 0:
+            raise InvalidSymbolError("ERROR_INVALID_SYMBOL")
 
-        for char in string+"$":
+        stack = ["$", "S"]
+        string = string+"$"
+        for i, char in enumerate(string):
+
+            print('{:<25}        {}'.format(string[i:], ''.join(stack[::-1])))
 
             if len(stack) == 0:
                 return False #unread input
@@ -17,24 +24,19 @@ class Parser():
             # apply production rules until top of stack is no longer a variable
             while stack[-1] in self.variables:
                 production = self.table[stack[-1]].get(char, None)
-
                 if production is None:
-                    print("production was None | Char --> ", char, " | Stack -->", stack[-1])
                     return False
                 else:
                     stack.pop()
-                    for alpha in production[::-1]:
-                        if alpha != '': stack.append(alpha)
+                    # push right hand side of productions to stack, ignore '' (epsilon)
+                    stack.extend(list(filter(lambda alpha : alpha != '', production))[::-1])
 
-            if stack[-1] in self.terminals:
-                if stack[-1] == char:
-                    stack.pop()
-                else:
-                    return False # terminal in stack and input dont match
+                print('{:<25}        {}'.format(string[i:], ''.join(stack[::-1])))
+
+
+            if stack[-1] in self.terminals and stack[-1] == char:
+                stack.pop()
             else:
-                if stack[-1] == char and stack[-1] == '$':
-                    return True
-                else:
-                    return False
+                return stack[-1] == char and stack[-1] == '$' and stack[-1] not in self.terminals
 
-        return True
+        return False

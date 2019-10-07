@@ -58,8 +58,14 @@ if __name__ == '__main__':
         }
     }
 
-    parser = Parser(table, ["1", "t","2", "3", "=",'8', ";","4", "5", "6", 'z', 'i', "7", "8", "9", '*', '6', ';', 'x', '3', 'w', 'e', 'y', '+', '(', '7', '>', '5', 'l', '1', '2', '9', '-', '4',")", *list("else S"),*list("else S"), *list("whileEdoSF")])
-    print(parser.parse_string("while(x>3)doletx=(x+2);;"))
+    parser = Parser(table, ["1", "t","2", "3", "=",'8', ";","4", "5", "6", 'z', 'i', "7", "8", "9", '*', '6', ';', 'x',
+                            '3', 'w', 'e', 'y', '+', '(', '7', '>', '5', 'l', '1', '2', '9', '-', '4',")", *list("else S"),
+                            *list("else S"), *list("whileEdoSF")])
+    try:
+        print("ACCEPTED") if parser.parse_string("while(x>3)doletx=(x+2);;") else print("REJECTED")
+    except Exception as e:
+        print(e.__str__())
+
 
 
     #"while(x>3)33doletx=(x+2);;" breaks it

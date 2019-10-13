@@ -1,5 +1,4 @@
 #!/usr/bin/env
-
 from parser import Parser
 
 if __name__ == '__main__':
@@ -11,7 +10,7 @@ if __name__ == '__main__':
             **dict.fromkeys(["i", ";", "$"], [""]),
         },
         "L" : {
-            **dict.fromkeys(["(", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9"], ["E;"]),
+            **dict.fromkeys(["(", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9"], ["E",";"]),
             **{"l" : "A;", "w" : "C;", },
         },
         "E" : {
@@ -42,8 +41,9 @@ if __name__ == '__main__':
         },
         "N" : dict.fromkeys(["1","2","3","4","5","6","7","8","9"], ["D","G"]),
         "G" : {
-            **dict.fromkeys(["1","2","3","4","5","6","7","8","9"], ["D","G"]),
-            **dict.fromkeys(['+', '-', '*', '>', ')', ';', 'd', '0'], ""), # sketchy - added without thinking
+            **dict.fromkeys(["1","2","3","4","5","6","7","8","9", "0"], ["D","G"]),
+            **dict.fromkeys(["0"], ["0", "G"]),
+            **dict.fromkeys(['+', '-', '*', '>', ')', ';', 'd'], ""), # sketchy - added without thinking
         },
         "D" : {
             "1" : ["1"],
@@ -58,13 +58,28 @@ if __name__ == '__main__':
         }
     }
 
-    parser = Parser(table, ["1", "t","2", "3", "=",'8', ";","4", "5", "6", 'z', 'i', "7", "8", "9", '*', '6', ';', 'x',
+    parser = Parser(table, ["0", "1", "t","2", "3", "=",'8', ";","4", "5", "6", 'z', 'i', "7", "8", "9", '*', '6', ';', 'x',
                             '3', 'w', 'e', 'y', '+', '(', '7', '>', '5', 'l', '1', '2', '9', '-', '4',")", *list("else S"),
                             *list("else S"), *list("whileEdoSF")])
     try:
-        print("ACCEPTED") if parser.parse_string("while(x>3)doletx=(x+2);;") else print("REJECTED")
+        print("ACCEPTED") if parser.validate("(x+1);") else print("REJECTED")
     except Exception as e:
-        print(e.__str__())
+        print(e)
+
+    try:
+        print("ACCEPTED") if parser.validate("") else print("REJECTED")
+    except Exception as e:
+        print(e)
+
+    try:
+        print("ACCEPTED") if parser.validate("letx = (y - 20);while 1 do y;;") else print("REJECTED")
+    except Exception as e:
+        print(e)
+
+    try:
+        print("ACCEPTED") if parser.validate("(x+1));") else print("REJECTED")
+    except Exception as e:
+        print(e)
 
 
 

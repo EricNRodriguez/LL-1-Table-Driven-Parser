@@ -7,13 +7,16 @@ class Parser():
         self.variables = list(table.keys())
         self.terminals = terminals
 
+    def __format_string(self, string):
+        return string.replace(' ', '').replace('\n', '') + '$'
 
-    def parse_string(self, string):
-        if len(list(filter(lambda input_char : input_char not in self.terminals, string))) != 0:
+    def validate(self, string):
+        string = self.__format_string(string)
+
+        if len(list(filter(lambda input_char : input_char not in self.terminals, string[:len(string)-1]))) != 0:
             raise InvalidSymbolError("ERROR_INVALID_SYMBOL")
 
         stack = ["$", "S"]
-        string = string+"$"
         for i, char in enumerate(string):
 
             print('{:<25}        {}'.format(string[i:], ''.join(stack[::-1])))
@@ -32,7 +35,6 @@ class Parser():
                     stack.extend(list(filter(lambda alpha : alpha != '', production))[::-1])
 
                 print('{:<25}        {}'.format(string[i:], ''.join(stack[::-1])))
-
 
             if stack[-1] in self.terminals and stack[-1] == char:
                 stack.pop()

@@ -1,11 +1,19 @@
 from invalid_symbol_error import InvalidSymbolError
+from ll1_table import terminals, table
+from sys import argv
 
 class Parser():
 
     def __init__(self, table, terminals):
         self.table = table
         self.variables = list(table.keys())
-        self.terminals = terminals
+        self.terminals = terminals # make this simple, and just find the lowercase things
+
+    def get_terminals(self):
+        return self.terminals
+
+    def get_variables(self):
+        return self.variables
 
     def __format_string(self, string):
         return string.replace(' ', '').replace('\n', '') + '$'
@@ -22,7 +30,7 @@ class Parser():
             print('{:<25}        {}'.format(string[i:], ''.join(stack[::-1])))
 
             if len(stack) == 0:
-                return False #unread input
+                return False # unread input
 
             # apply production rules until top of stack is no longer a variable
             while stack[-1] in self.variables:
@@ -42,3 +50,34 @@ class Parser():
                 return stack[-1] == char and stack[-1] == '$' and stack[-1] not in self.terminals
 
         return False
+
+
+
+
+def main():
+
+    if len(argv) < 2:
+        print(" File path to string required as argument")
+        quit()
+
+    parser = Parser(table, terminals)
+
+    try:
+        string = open(argv[1]).read().replace('\n', '').replace(" ", "")
+    except FileNotFoundError as e:
+        print("Invalid file path")
+        quit()
+    except Exception as e:
+        print(e.__repr__())
+        quit()
+
+    try:
+        print("ACCEPTED") if parser.validate(string) else print("REJECTED")
+    except InvalidSymbolError as e:
+        print(e.__str__())
+    except Exception as e:
+        print(e.__repr__())
+    return
+
+if __name__ == '__main__':
+   main()
